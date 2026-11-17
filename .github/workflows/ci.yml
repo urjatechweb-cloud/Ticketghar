@@ -1,0 +1,33 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: tg
+          POSTGRES_PASSWORD: tg
+          POSTGRES_DB: ticketghar
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tg" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck -w @ticketghar/api
+      - run: npm test
+        env:
+          TEST_ADMIN_DATABASE_URL: postgres://tg:tg@localhost:5432/postgres
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1

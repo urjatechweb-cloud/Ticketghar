@@ -1,0 +1,14 @@
+{
+  "name": "ticketghar",
+  "private": true,
+  "workspaces": ["apps/api", "apps/web"],
+  "scripts": {
+    "db:up": "docker compose up -d db",
+    "migrate": "npm run migrate -w @ticketghar/api",
+    "seed": "npm run seed -w @ticketghar/api",
+    "dev:api": "npm run dev -w @ticketghar/api",
+    "dev:web": "npm run dev -w @ticketghar/web",
+    "test": "npm test -w @ticketghar/api",
+    "build": "npm run build -w @ticketghar/api && npm run build -w @ticketghar/web"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "@ticketghar/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TicketGhar booking API: catalog, atomic slot holds, double-entry ledger, payments, operators, WhatsApp",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && cp -r src/db/migrations dist/db/",
+    "start": "node dist/main.js",
+    "dev": "ts-node src/main.ts",
+    "migrate": "ts-node src/db/migrate.ts",
+    "seed": "ts-node src/db/seed.ts",
+    "test": "jest --runInBand",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.10",
+    "@nestjs/core": "^11.2.10",
+    "@nestjs/platform-express": "^11.2.10",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "pg": "^8.23.1",
+    "qrcode": "^1.5.4",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^11.2.10",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "@types/qrcode": "^1.5.6",
+    "@types/supertest": "^7.2.1",
+    "jest": "^29.7.0",
+    "supertest": "^7.3.2",
+    "ts-jest": "^29.4.15",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/test"],
+    "testTimeout": 30000
+  }
+}
