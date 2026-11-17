@@ -3,13 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Client } from 'pg';
 import { AppModule } from '../src/app.module';
-import { AppConfig, CONFIG, loadConfig } from '../src/config';
+import { AppConfig, CONFIG, loadConfig, loadEnvFiles } from '../src/config';
 import { DbService } from '../src/db/db.service';
 import { migrate } from '../src/db/migrate';
 import { NOTIFIER, Notifier } from '../src/notify/notifier';
 import { configureApp } from '../src/main';
 
 process.env.DISABLE_JOBS = 'true';
+loadEnvFiles(); // picks up TEST_ADMIN_DATABASE_URL from the repo-root .env, if set
 
 const ADMIN_URL = process.env.TEST_ADMIN_DATABASE_URL ?? 'postgres://tg:tg@localhost:5432/postgres';
 

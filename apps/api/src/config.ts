@@ -1,3 +1,29 @@
+import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { parseEnv } from 'util';
+
+/**
+ * Loads the repo-root .env (then apps/api/.env) into process.env without
+ * overwriting variables already set, so real environment variables win.
+ */
+export function loadEnvFiles(): void {
+  // This file lives in apps/api/src (ts-node) or apps/api/dist (built): one level below apps/api either way.
+  const apiRoot = join(__dirname, '..');
+  const repoRoot = join(apiRoot, '..', '..');
+  for (const file of [join(repoRoot, '.env'), join(apiRoot, '.env')]) {
+    if (!existsSync(file)) continue;
+    try {
+      // Parse and assign ourselves rather than process.loadEnvFile, which writes to
+      // the real environment and misses sandboxed copies (e.g. under Jest).
+      for (const [k, v] of Object.entries(parseEnv(readFileSync(file, 'utf8')))) {
+        if (process.env[k] === undefined) process.env[k] = v;
+      }
+    } catch {
+      /* unreadable .env: fall back to the process environment */
+    }
+  }
+}
+
 /** All runtime configuration, read once from the environment. */
 export interface AppConfig {
   databaseUrl: string;
@@ -18,7 +44,9 @@ export interface AppConfig {
   };
 }
 
-export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
+export function loadConfig(envArg?: NodeJS.ProcessEnv): AppConfig {
+  if (!envArg) loadEnvFiles();
+  const env: NodeJS.ProcessEnv = envArg ?? process.env;
   const str = (k: string, d = '') => env[k] ?? d;
   return {
     databaseUrl: str('DATABASE_URL', 'postgres://tg:tg@localhost:5432/ticketghar'),
